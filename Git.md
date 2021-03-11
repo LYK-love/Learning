@@ -362,7 +362,7 @@ Changes to be committed:
 
 
 
-所以,`git add`命令就是把要提交的所有修改放到暂存区(stage),然后,执行`git commit`可以一次性把暂存区所有修改提交到分支. (暂存区也就被清空了),因此
+所以,`git add`命令就是把要提交的所有修改放到暂存区(stage),然后,执行`git commit`可以一次性把暂存区所有修改提交到分支. (注意暂存区不是被**"清空"**,而是"安静"了.暂存区中永远保留着上次add的版本)因此
 
 ![git-stage-after-commit](https://www.liaoxuefeng.com/files/attachments/919020100829536/0)
 
@@ -378,4 +378,187 @@ nothing to commit, working tree clean
 
 * 关于`git diff`:
 
-  如果是输入`git diff`，查看到的是**工作区和暂存区**(上次git add 的内容)的不同，如果是`git diff --cached`，查看到的是**暂存区和HEAD**的不同。
+  如果是输入`git diff`，查看到的是**工作区和暂存区**(上次git add 的内容)的不同，如果是`git diff --cached`，查看到的是**暂存区和HEAD**的不同。 
+
+
+
+### 撤销修改
+
+在`readme .txt`中添加了一行,但还没有`git add`:
+
+```
+$ cat readme.txt
+Git is a distributed version control system.
+Git is free software distributed under the GPL.
+Git has a mutable index called stage.
+Git tracks changes of files.
+My stupid boss still prefers SVN.
+```
+
+现在想撤销最后一行,可以用 `git restore readme.txt`, 有两种情况:
+
+* `read.me.txt`自修改后还没有被放到暂存区,现在,撤销修改就回到和版本库一模一样的状态 .
+* `readme.txt`已经添加到暂存区后,又做了修改. 现在,撤销修改就回到和添加到暂存区后的状态.
+
+总之,就是让该文件回到最近一次`add`时的状态(即 **暂存区**里的状态)
+
+现在,看看`readme.txt`的内容:
+
+```
+$ cat readme.txt
+Git is a distributed version control system.
+Git is free software distributed under the GPL.
+Git has a mutable index called stage.
+Git tracks changes of files.
+```
+
+果然复原了.
+
+
+
+如果我把那句话` git add`到暂存区了呢? ( 但还没有`commit`) ,先用`git status`查看一下,
+
+```
+$ git status
+On branch master
+Changes to be committed:
+  (use "git restore --staged <file>..." to unstage)
+        modified:   readme.txt
+```
+
+git告诉我们,修改只是被添加到了暂存区,还没有被提交,可以用 `git restore --staged readme.txt`  把暂存区的修改撤销掉( unstage ),**重新放回工作区**:
+
+```
+$ cat readme.txt
+Git is a distributed version control system.
+Git is free software distributed under the GPL.
+Git has a mutable index called stage.
+Git tracks changes of files.
+My stupid boss still prefers SVN.
+```
+
+再用`git status`查看一下,现在暂存区是干净的,工作区有修改:
+
+```
+$ git status
+On branch master
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        modified:   readme.txt
+```
+
+我们要丢弃工作区的修改,就回到了上上步: `git restore readme.txt`
+
+```
+$ git restore readme.txt
+
+$ git status
+On branch master
+nothing to commit, working tree clean
+```
+
+Over!
+
+如果我不仅把那句话`git add`了,我还`git commit`到了版本库, 我们可以用*版本回退*. 但如果你还把它`git push`到了 远程版本库,那就完蛋了.
+
+### 删除文件
+
+情况一: 工作区文件删除,无其它操作
+
+1.  `rm readme.txt`
+
+可用命令`git restore readme.txt`恢复文件
+
+情况二: 工作区文件删除,版本库文件删除
+
+1. ` rm readme.txt`
+2. `git rm readme.txt`
+3. `git commit -m" remove readme.txt "`
+
+  可用命令`git reset --hard HAED^`恢复文件( 回到哪个头要看情况,如果当前分支内有这个文件,那就可以回到当前版本,不用去上个版本)
+
+
+
+`rm`是DOS命令,在各个shell都可以用. 用在git仓库中,是删除工作区的文件,用 `git restore readme.txt`可以还原. 而`git rm readme.txt`是删除工作区和暂存区的文件, **由于`git restore`的原理是将工作复原为暂存区中的版本**,而暂存区中该文件也被删除了,所以恢复不了, 分支里还有这个文件,所以用版本回退`git reset --hard HEAD^`
+
+## 远程仓库
+
+### 添加远程库
+
+把已有的本地仓库与一个git仓库相关联( 建立绑定关系 ):
+
+`$ git remote add origin https://github.com/LYK-love/Learning`, 添加后,远程库的名字就是`origin`,这是Git默认的叫法,也可以改名,但没必要.
+
+下一步,就可以把本地库的内容push到远程库上:
+
+```
+$ git push -u origin master
+Enumerating objects: 7, done.
+Counting objects: 100% (7/7), done.
+Delta compression using up to 12 threads
+Compressing objects: 100% (7/7), done.
+Writing objects: 100% (7/7), 6.46 KiB | 6.46 MiB/s, done.
+Total 7 (delta 1), reused 0 (delta 0), pack-reused 0
+remote: Resolving deltas: 100% (1/1), done.
+To https://github.com/LYK-love/Learning.git
+ * [new branch]      master -> master
+Branch 'master' set up to track remote branch 'master' from 'origin'.
+```
+
+把本地库内容推送到远程,用`git push`命令,实际上是把当前分支`master`(本地的那个)推送到远程库(名叫`origin`).
+
+由于远程库是空的,我们第一次推送`master`分支时,加上了`-u`参数. Git不但会把本地的`master`分支内容推送到远程新的`master`分支( 现在远程也有一个叫`master`的分支了),还会把本地的`master`分支和远程的`master`分支关联起来,这样在以后的oush或oull时就可以简化命令.
+
+从现在起,只要在本地作了`git commit`,就可以通过命令`git push origin`把本地的`master`分支的最新修改推送到Github,大功告成!
+
+### 删除远程库
+
+如果添加远程库的时候地址写错了,或者就是想删除远程库,可以用`git remote rm <name>`命令. 使用前建议先用`git remote -v`查看远程库信息:
+
+```
+$ git remote -v
+origin  https://github.com/LYK-love/Learning.git (fetch)
+origin  https://github.com/LYK-love/Learning.git (push)
+```
+
+然后,根据名字删除.
+
+**注意**:
+
+* 此处的*"删除"*其实是解除了本地和远程库的绑定关系,并没有物理上删除远程库,远程库本身没有任何改动( 也就是说远程库里的内容都还在 )要恢复绑定关系,可以再次用`$ git remote add origin https://github.com/LYK-love/Learning` , 然后用`$ git push -u origin master`来推送( `-u`参数能关联分支 )
+* `origin`就是你指向的远程库的名字,可以等价于`https://github.com/LYK-love/Learning`,它指向的是repository, 而master只是这个repository中默认创建的第一个branch. 当我们`push`的时候,因为`origin`和`master`是默认创建的,所以这二者可以省略,但这是个bad practice,因为如果我换一个branch再push的时候,这样就很纠结了. 
+* 当然`origin`这个名字来源于`$ git remote add origin https://github.com/LYK-love/Learning`,我们也可以把`origin`改成别的名字,比如阿猫阿狗,如 `$ git remote add aMao https://github.com/LYK-love/Learning`,那么推送的时候就可以用`git push -u aMao master`了, 如果你的本地版本库是从远程仓库git clone而来，git会默认把这个远程仓库的地址叫做origin. 这时候依旧可以通过 git remote add 把远程仓库的名称改成'aGou'
+
+### 从远程库clone
+
+随便哪个本地仓库,都可以用`$ git clone git@github.com:LYK-love/Learning.git`来clone. Github给出的地址不止一个,还可以用`https://github.com/LYK-love/Learning`. 实际上Git支持多种协议,默认的`git://`使用`ssh`( Secure Shell,安全外壳协议),但也可以使用`http`等其他协议. 使用`https`除了**速度慢**以外，还有个最大的麻烦是每次推送都必须输入口令，但是在某些只开放http端口的公司内部就无法使用`ssh`协议而只能用`https`。
+
+**补充**: SSH
+
+* Intro:
+
+  SSH 为 [Secure Shell](https://baike.baidu.com/item/Secure Shell) 的缩写，由 IETF 的网络小组（Network Working Group）所制定；SSH 为建立在应用层基础上的安全协议。SSH 是较可靠，专为[远程登录](https://baike.baidu.com/item/远程登录/1071998)会话和其他网络服务提供安全性的协议。利用 SSH 协议可以有效防止远程管理过程中的信息泄露问题。
+
+* 功能:
+
+  传统的网络服务程序，如：ftp、pop和telnet在本质上都是不安全的，因为它们在网络上用明文传送口令和数据，别有用心的人非常容易就可以截获这些口令和数据。而且，这些服务程序的安全验证方式也是有其弱点的， 就是很容易受到“**中间人**”（man-in-the-middle）这种方式的攻击。所谓“中间人”的攻击方式， 就是“中间人”冒充真正的服务器接收你传给服务器的数据，然后再冒充你把数据传给真正的服务器。服务器和你之间的数据传送被“中间人”一转手做了手脚之后，就会出现很严重的问题。通过使用SSH，你可以把所有传输的数据进行加密，这样"中间人"这种攻击方式就不可能实现了，而且也能够防止DNS欺骗和IP欺骗。使用SSH，还有一个额外的好处就是传输的数据是经过压缩的，所以可以加快传输的速度。SSH有很多功能，它既可以代替Telnet，又可以为FTP、PoP、甚至为PPP提供一个安全的"通道" 。
+
+* 验证:
+
+  从客户端来看，SSH提供两种级别的安全验证。
+
+  **第一种级别（基于口令的安全验证）**
+
+  只要你知道自己帐号和口令，就可以登录到远程主机。所有传输的数据都会被加密，但是不能保证你正在连接的服务器就是你想连接的[服务器](https://baike.baidu.com/item/服务器)。可能会有别的服务器在冒充真正的服务器，也就是受到“中间人”这种方式的攻击。
+
+  **第二种级别（基于密匙的安全验证）**
+
+  需要依靠[密匙](https://baike.baidu.com/item/密匙)，也就是你必须为自己创建一对密匙，并把公用密匙放在需要访问的服务器上。如果你要连接到SSH服务器上，客户端软件就会向服务器发出请求，请求用你的密匙进行安全验证。服务器收到请求之后，先在该服务器上你的主目录下寻找你的公用密匙，然后把它和你发送过来的公用密匙进行比较。如果两个密匙一致，服务器就用公用密匙加密“**质询**”（challenge）并把它发送给客户端软件。客户端软件收到“质询”之后就可以用你的 **私人密匙** *解密再把它发送给服务器*。
+
+  用这种方式，你必须知道自己密匙的[口令](https://baike.baidu.com/item/口令)。但是，与第一种级别相比，第二种级别不需要在网络上传送口令。
+
+  第二种级别不仅加密所有传送的数据，而且“中间人”这种攻击方式也是不可能的（因为他没有你的私人密匙）。但是整个登录的过程可能需要10秒  。
+
+
+
