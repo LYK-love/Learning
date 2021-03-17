@@ -687,7 +687,7 @@ list元素也可以是另一个list，比如：
 
 ### tuple
 
-另一种有序列表叫元组：tuple。tuple和list非常类似，但是tuple一旦初始化就不能修改，比如同样是列出同学的名字：
+另一种**有序**列表叫元组：tuple。tuple和list非常类似，但是tuple一旦初始化就不能修改，比如同样是列出同学的名字：
 
 ```
 >>> classmates = ('Michael', 'Bob', 'Tracy')
@@ -969,7 +969,7 @@ scores = [95, 75, 85]
 ```
 >>> d = {'Michael': 95, 'Bob': 75, 'Tracy': 85}
 >>> d['Michael']
-95
+95d[]
 ```
 
 为什么dict查找速度这么快？因为dict的实现原理和查字典是一样的。假设字典包含了1万个汉字，我们要查某一个字，一个办法是把字典从第一页往后翻，直到找到我们想要的字为止，这种方法就是在list中查找元素的方法，list越大，查找越慢。
@@ -1114,7 +1114,7 @@ set可以看成数学意义上的无序和无重复元素的集合，因此，�
 {1, 2, 3, 4}
 ```
 
-set和dict的唯一区别仅在于没有存储对应的value，但是，set的原理和dict一样，所以，同样不可以放入可变对象，因为无法判断两个可变对象是否相等，也就无法保证set内部“不会有重复元素”。试试把list放入set，看看是否会报错。
+set和dict的唯一区别仅在于没有存储对应的value，但是，set的原理和dict一样，所以，同样不可以放入可变对象，因为无法判断两个可变对象是否相等，也就无法保证set内部“不会有重复元素”。试试把list放入set，看看是否会报错。( 会输出: `**TypeError**: unhashable type: 'list'` )
 
 ### 再议不可变对象
 
@@ -1129,7 +1129,7 @@ set和dict的唯一区别仅在于没有存储对应的value，但是，set的�
 ['a', 'b', 'c']
 ```
 
-而对于不可变对象，比如str，对str进行操作呢：
+而对于不可变对象，比如str，对str进行操作：
 
 ```
 >>> a = 'abc'
@@ -1246,13 +1246,15 @@ TypeError: bad operand type for abs(): 'str'
 
 ```
 def my_abs(x):
-    if not isinstance(x, (int, float)):
+    if not isinstance(x, (int, float)): ## 
         raise TypeError('bad operand type')
     if x >= 0:
         return x
     else:
         return -x
 ```
+
+注意`isinstance() arg 2 must be a type or tuple of types`,就是说`(interesting,float)`不能用`[int,float]`代替
 
 添加了参数检查后，如果传入错误的参数类型，函数就可以抛出一个错误：
 
@@ -1300,6 +1302,26 @@ def move(x, y, step, angle=0):
 ```
 
 原来返回值是一个tuple！但是，在语法上，返回一个tuple可以省略括号，而多个变量可以同时接收一个tuple，按位置赋给对应的值，所以，Python的函数返回多值其实就是返回一个tuple，但写起来更方便。
+
+借助这一特点,python可以实现**解构赋值**:
+
+```python
+def parse():
+    return 12,'me'
+x,y = parse() # 把oarse()看作一个元组,默认按下标顺序赋值
+print(x,y)
+
+输出为: 12 me
+    
+#---也可以这样:------------#
+x,y = parse[0],parse(1)
+print(x,y)
+
+输出为: 12 me
+    
+```
+
+
 
 # 高级特性
 
@@ -1371,6 +1393,8 @@ def move(x, y, step, angle=0):
 ```
 
 记住倒数第一个元素的索引是`-1`。
+
+注: 由于倒数第一个元素索引为-1,因此正数第一个元素索引为`-len(L)`,也就是说,`L[-len(L):]` 可以复制一个list,等价于`L[0:len(L)]`,即`L[:]`. 注意,负数访问法最右边只到`-1`,意味着不能像正数访问一样通过不存在的下标`len(L)`来完整切片. 想要完整切片,只能用缺省的方式.
 
 切片操作十分有用。我们先创建一个0-99的数列：
 
