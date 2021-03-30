@@ -1314,7 +1314,7 @@ print(x,y)
 输出为: 12 me
     
 #---也可以这样:------------#
-x,y = parse[0],parse(1)
+x,y = parse[0],parse[1]
 print(x,y)
 
 输出为: 12 me
@@ -1653,7 +1653,7 @@ SyntaxError: invalid syntax
 
 另一些童鞋发现把`if`写在`for`前面必须加`else`，否则报错：
 
-```
+```python
 >>> [x if x % 2 == 0 for x in range(1, 11)]
   File "<stdin>", line 1
     [x if x % 2 == 0 for x in range(1, 11)]
@@ -1663,7 +1663,7 @@ SyntaxError: invalid syntax
 
 这是因为`for`前面的部分是一个表达式，它必须根据`x`计算出一个结果。因此，考察表达式：`x if x % 2 == 0`，它无法根据`x`计算出结果，因为缺少`else`，必须加上`else`：
 
-```
+```python
 >>> [x if x % 2 == 0 else -x for x in range(1, 11)]
 [-1, 2, -3, 4, -5, 6, -7, 8, -9, 10]
 ```
@@ -1676,7 +1676,7 @@ SyntaxError: invalid syntax
 
 如果list中既包含字符串，又包含整数，由于非字符串类型没有`lower()`方法，所以列表生成式会报错：
 
-```
+```python
 >>> L = ['Hello', 'World', 18, 'Apple', None]
 >>> [s.lower() for s in L]
 Traceback (most recent call last):
@@ -1687,7 +1687,7 @@ AttributeError: 'int' object has no attribute 'lower'
 
 使用内建的`isinstance`函数可以判断一个变量是不是字符串：
 
-```
+```python
 >>> x = 'abc'
 >>> y = 123
 >>> isinstance(x, str)
