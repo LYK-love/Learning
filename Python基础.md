@@ -6339,11 +6339,11 @@ d = dict(name='Bob', age=20, score=88)
 
 可以随时修改变量，比如把`name`改成`'Bill'`，但是一旦程序结束，变量所占用的内存就被操作系统全部回收。如果没有把修改后的`'Bill'`存储到磁盘上，下次重新运行程序，变量又被初始化为`'Bob'`。
 
-我们**把变量从内存中变成可存储或传输的过程称之为序列化**，在Python中叫pickling，在其他语言中也被称之为serialization，marshalling，flattening等等，都是一个意思。
+我们把变量从内存中变成可存储或传输的过程称之为序列化，在Python中叫pickling，在其他语言中也被称之为serialization，marshalling，flattening等等，都是一个意思。
 
-序列化之后，就可以把序列化后的内容**写入磁盘**，或者通过网络传输到别的机器上。
+序列化之后，就可以把序列化后的内容写入磁盘，或者通过网络传输到别的机器上。
 
-反过来，把**变量内容从序列化的对象重新读到内存里称之为反序列化**，即unpickling。
+反过来，把变量内容从序列化的对象重新读到内存里称之为反序列化，即unpickling。
 
 Python提供了`pickle`模块来实现序列化。
 
@@ -6356,7 +6356,7 @@ Python提供了`pickle`模块来实现序列化。
 b'\x80\x03}q\x00(X\x03\x00\x00\x00ageq\x01K\x14X\x05\x00\x00\x00scoreq\x02KXX\x04\x00\x00\x00nameq\x03X\x03\x00\x00\x00Bobq\x04u.'
 ```
 
-`pickle.dumps()`方法把任意对象序列化成一个`bytes`，然后，就可以把这个`bytes`写入文件。或者用另一个方法`pickle.dump()`直接把对象序列化后写入一个file-like Object：( d会先被序列化,然后被写入文件 )
+`pickle.dumps()`方法把任意对象序列化成一个`bytes`，然后，就可以把这个`bytes`写入文件。或者用另一个方法`pickle.dump()`直接把对象序列化后写入一个file-like Object：
 
 ```
 >>> f = open('dump.txt', 'wb')
@@ -6366,7 +6366,7 @@ b'\x80\x03}q\x00(X\x03\x00\x00\x00ageq\x01K\x14X\x05\x00\x00\x00scoreq\x02KXX\x0
 
 看看写入的`dump.txt`文件，一堆乱七八糟的内容，这些都是Python保存的对象内部信息。
 
-当我们要把对象从磁盘读到内存时，可以先把内容读到一个`bytes`，然后用`pickle.loads()`方法反序列化出对象，也可以直接用`pickle.load()`方法从一个`file-like Object`中直接反序列化出对象。我们打开另一个Python命令行来**反序列化**刚才保存的对象：
+当我们要把对象从磁盘读到内存时，可以先把内容读到一个`bytes`，然后用`pickle.loads()`方法反序列化出对象，也可以直接用`pickle.load()`方法从一个`file-like Object`中直接反序列化出对象。我们打开另一个Python命令行来反序列化刚才保存的对象：
 
 ```
 >>> f = open('dump.txt', 'rb')
@@ -6479,7 +6479,7 @@ print(json.dumps(s, default=lambda obj: obj.__dict__))
 
 因为通常`class`的实例都有一个`__dict__`属性，它就是一个`dict`，用来存储实例变量。也有少数例外，比如定义了`__slots__`的class。
 
-同样的道理，如果我们要把JSON反序列化为一个`Student`对象实例，`loads()`方法<u>首先转换出一个`dict`对象，然后，我们传入的`object_hook`函数负责把`dict`转换为`Student`实例</u>：
+同样的道理，如果我们要把JSON反序列化为一个`Student`对象实例，`loads()`方法首先转换出一个`dict`对象，然后，我们传入的`object_hook`函数负责把`dict`转换为`Student`实例：
 
 ```
 def dict2student(d):
