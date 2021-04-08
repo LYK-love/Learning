@@ -60,3 +60,103 @@
     	判断标准是：⽤例描述了为应对⼀个业务事件，由⼀个⽤户发起，并在⼀ 个连续时间段内完成，可以增加业务价值的任务。
   * 合并用例
 * 细化⽤例
+
+### 建立概念类图
+
+* 对每个⽤例⽂本描述，尤其是场景描述，建⽴局部的概念类图 
+  * 根据⽤例的⽂本描述，识别候选类 
+  * 筛选候选类，确定概念类 
+  * 识别关联 
+  * 识别重要属性
+* 将所有⽤例产⽣的局部概念类图进⾏合并，建⽴软件系统的整体概念类图
+
+### 候选类识别
+
+* 发现软件系统与外界交互时可能涉及的对象与类，它们就是候选类。 
+* ⾏为分析、名词分析、CRC等很多种⽅法都可以⽤来分析⽤例⽂本描述
+
+### 确定概念类的准则
+
+* 依据系统的需求 （ 概念类一定来自现实的需求 ）
+* 该类的对象实例的状态与⾏为是否完全必要
+
+### 候选类向概念类的转化
+
+如果候选类的对象实例 
+
+* 既需要维持⼀定的状态，⼜需要依据状态表现⼀定的⾏为 
+  * 确定为⼀个概念类
+* 如只需要维护状态，不需要表现⾏为 
+  * 其他概念类的属性 
+* 不需要维护状态，却需要表现⾏为 
+  * ⾸先要重新审视需求是否有遗漏，因为没有状态⽀持的对象⽆法表现⾏为
+  * 如果确定没有需求的遗漏，就需要剔除该候选类，并将⾏为转交给具备状态⽀持能⼒的其他概念类 
+* 既不需要维护状态，⼜不需要表现⾏为 
+  * 应该被完全剔除
+
+### 识别关联
+
+* 分析⽤例⽂本描述，发现概念类之间的协作，需要协作的类之间需要建⽴关 联。
+* 分析和补充问题域内的关系，例如概念类之间的整体部分关系和明显的语义 联系。
+* 对问题域关系的补充要适可⽽⽌，不要把关系搞得过度复杂化。 • 去除冗余关联和导出关联。
+
+### 识别重要属性
+* 这些属性往往是实现类协作时必要的信息，是协作的条件、输⼊、结果或者 过程记录。
+* 通过分析⽤例的描述，并与⽤户交流，补充问题域信息，可以发现重要的属 性信息。
+* 在分析每个单独的⽤例（场景）描述时，为各个概念类发现的重要属性可能 不多，甚⾄有些概念类没有任何重要属性。但是，系统通常有多个⽤例和很 多场景，会建⽴多个局部的概念类图，只有在合并所有局部概念类图之后， 各个概念类的重要属性才能得到全⾯的体现
+
+### 顺序图
+* A behavioral model shows the interactions between objects to produce some particular system behavior that is specified as a use-case
+* Sequence diagrams (or collaboration diagrams) in the UML are used to model interaction between objects
+* 分析阶段，主要是利⽤系统顺序图，表达系统和外部参与者之间的交互⾏ 为。
+
+### Behavioral Diagram —— State Diagram Basic concept
+
+* State: 
+  * a set of observable circumstances that characterizes the behavior of a system at a given time
+* State transition: 
+* * the movement from one state to another
+* Event: 
+  * an occurrence that causes the system to exhibit some predictable form of behavior
+* Action: 
+  * process that occurs as a consequence of making a transition
+
+### 建⽴状态图 
+
+* 确定上下⽂环境
+  * 状态图是⽴⾜于状态快照进⾏⾏为描述的，因此建⽴状态图时⾸先要搞清楚状态的主体，确定状态的上下⽂环 境。常⻅的状态主体有：类、⽤例、多个⽤例和整个系统。
+
+* 识别状态
+  * 状态主体会表现出⼀些稳定的状态，它们需要被识别出来，并且标记出其中的初始状态和结束状态集。在有些情 况下，可能会不存在确定的初始状态和结束状态。
+* 建⽴状态转换 
+  * 根据需求所描述的系统⾏为，建⽴各个稳定状态之间可能存在的转换。
+* 补充详细信息，完善状态图 
+  * 添加转换的触发事件、转换⾏为和监护条件等详细信息。
+
+
+
+## 结构化分析
+
+结构化分析思想：
+
+* ⾃顶向下分解
+
+* 图 
+  * 数据流图
+  *  实体关系图 
+  * 状态转移图
+
+### Data Flow Diagram ——Flow Oriented Model
+* 将系统看做是过程的集合； 
+* 过程就是对数据的处理： 
+  * 接收输⼊，进⾏数据转换，输出结果
+* Represents how data objects are transformed at they move through the system 
+* 可能需要和软件系统外的实体尤其是⼈进⾏交互 
+* 数据的变化包括： 
+  * 被转换、被存储、或者被分布
+
+## Data Flow Diagram —— External Entity
+* A producer or consumer of data 
+  * Examples: a person, a device, a sensor 
+  * Another example: computer-based system
+* Data must always originate somewhere and must always be sent to something

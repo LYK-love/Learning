@@ -1,5 +1,25 @@
 # Python基础
 
+## Intro
+
+> Python is an easy to learn, powerful programming language. It has efficient high-level data structures and a simple but effective approach to object-oriented programming. Python's elegant syntax and dynamic typing, together with its interpreted nature, make it an ideal language for scripting and rapid application development in many areas on most platforms.
+
+### Intepreted
+
+Internally, Python converts the source code into an intermediate form called **bytecodes** and then translates this into the native language of your computer and then runs it. 
+
+### Extensible
+
+If you need a critical piece of code to run very fast or want to have some piece of algorithm not to be open, you can code that part of your program in C or C++ and then use it from your Python program.
+
+可以把C/C++内嵌到Python
+
+### Embeddable
+
+You can embed Python within your C/C++ programs to give scripting capabilities for your program's users.
+
+Python可以内嵌到C/C++里面
+
 ## 数据类型和变量
 
 ### 数据类型
@@ -14,6 +34,8 @@ Python可以处理任意大小的整数，当然包括负整数，在程序中�
 
 对于很大的数，例如`10000000000`，很难数清楚0的个数。Python允许在数字中间以`_`分隔，因此，写成`10_000_000_000`和`10000000000`是完全一样的。十六进制数也可以写成`0xa1b2_c3d4`。
 
+> There is no separate` long` type. The` int `type can be an integer of any size.
+
 #### 浮点数
 
 浮点数也就是小数，之所以称为浮点数，是因为按照科学记数法表示时，一个浮点数的小数点位置是可变的，比如，1.23x109和12.3x108是完全相等的。浮点数可以用数学写法，如`1.23`，`3.14`，`-9.01`，等等。但是对于很大或很小的浮点数，就必须用科学计数法表示，把10用e替代，1.23x10^9就是`1.23e9`，或者`12.3e8`，0.000012可以写成`1.2e-5`，等等。
@@ -22,7 +44,34 @@ Python可以处理任意大小的整数，当然包括负整数，在程序中�
 
 #### 字符串
 
-字符串是以单引号`'`或双引号`"`括起来的任意文本，比如`'abc'`，`"xyz"`等等。请注意，`''`或`""`本身只是一种表示方式，不是字符串的一部分，因此，字符串`'abc'`只有`a`，`b`，`c`这3个字符。如果`'`本身也是一个字符，那就可以用`""`括起来，比如`"I'm OK"`包含的字符是`I`，`'`，`m`，空格，`O`，`K`这6个字符。
+A string is **a sequence of characters**. Strings are basically just a bunch of words.
+
+#### Single Quote
+You can specify strings using single quotes such as 'Quote me on this' . All white space i.e. spaces and tabs, within the quotes, are <u>preserved as-is.</u> 
+
+#### Double Quotes
+Strings in double quotes work exactly <u>the same way as strings in single quotes.</u> An example is "What's your name?" .
+
+### Triple Quotes
+You can specify <u>multi-line</u> strings using triple quotes - ( """ or ''' ). <u>You can use single quotes and double quotes freely within the triple quotes</u>. An example is:
+
+```python
+'''
+This is a multi-line string. 
+This is the first line. 
+This is the second line. 
+"What's your name?," I asked.
+He said "Bond, James Bond."
+'''
+```
+
+
+
+note: 
+
+* ''`或`""`本身只是一种表示方式，不是字符串的一部分，因此，字符串`'abc'`只有`a`，`b`，`c`这3个字符。如果`'`本身也是一个字符，那就可以用`""`括起来，比如`"I'm OK"`包含的字符是`I`，`'`，`m`，空格，`O`，`K`这6个字符。
+* Strings Are Immutable, This means that once you have created a string, you cannot change it.
+* There is no separate `char` data type in Python.
 
 如果字符串内部既包含`'`又包含`"`怎么办？可以用转义字符`\`来标识，比如：
 
@@ -248,6 +297,8 @@ a = 'ABC'
 ![py-var-code-3](https://www.liaoxuefeng.com/files/attachments/923792191637760/0)
 
 所以，最后打印变量`b`的结果自然是`'ABC'`了。
+
+
 
 ### 常量
 
@@ -524,9 +575,69 @@ UnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 3: invalid 
 
 另一种格式化字符串的方法是使用字符串的`format()`方法，它会用传入的参数依次替换字符串内的占位符`{0}`、`{1}`……，不过这种方式写起来比%要麻烦得多：
 
-```
+```python
 >>> 'Hello, {0}, 成绩提升了 {1:.1f}%'.format('小明', 17.125)
 'Hello, 小明, 成绩提升了 17.1%'
+```
+
+
+
+> A string can use certain specifications and subsequently, the format method can be called to **substitute** those specifications with **corresponding arguments** to the format method.
+
+```python
+>>> age = 20 
+>>> name = 'Swaroop'
+>>> print('{0} was {1} years old when he wrote this book'.format(name, age))
+>>> print('Why is {0} playing with that python?'.format(name))
+'Swaroop was 20 years old when he wrote this book'
+'Why is Swaroop playing with that python?'
+```
+
+
+
+Notice that we could have achieved the same using string concatenation: 
+
+`name + ' is ' + str(age) + ' years old'`
+
+but that is much uglier and error-prone. Second, the conversion to string would be done <u>automatically by the format method instead of the explicit conversion to strings needed in this case.(自动转换为字符串)</u> Third, when using the format method, we can change the message without having to deal with the variables used and vice-versa.
+
+Also note that the numbers are optional, so you could have also written as:
+
+```python
+age = 20 
+name = 'Swaroop'
+print('{} was {} years old when he wrote this book'.format(name, age)) 
+print('Why is {} playing with that python?'.format(name))
+
+```
+
+which will give the same exact output as the previous program.  不写占位符的数字也没关系
+
+What Python does in the format method is that it <u>substitutes each argument value into the place of the specification</u>. There can be more detailed specifications such as:
+
+```python
+# decimal (.) precision of 3 for float '0.333' 
+print('{0:.3f}'.format(1.0/3)) 
+
+# fill with underscores (_) with the text centered 
+# (^) to 11 width '___hello___' ( 用下划线符来填充文本(以原文本为中心)直到宽度为11 )
+print('{0:_^11}'.format('hello')) 
+
+# keyword-based 'Swaroop wrote A Byte of Python' (  键值对指定 ) 
+print('{name} wrote {book}'.format(name='Swaroop', book='A Byte of Python'))
+
+输出为:
+0.333 
+___hello___ 
+Swaroop wrote A Byte of Python
+
+注:
+>>> print('{0:_^10}'.format('hello')) #如果没法对称,则前面比后面少一位
+__hello___
+```
+
+```
+
 ```
 
 ### f-string
@@ -549,6 +660,98 @@ The area of a circle with radius 2.5 is 19.62
 ```
 
 注意这里是四舍五入的（不同于类型转换，类型转换不会四舍五入）
+
+note:
+
+* `print` always ends with an invisible "new line" character ( `\n` ) so that repeated calls to print will all print on a *separate line* each. To prevent this newline character from being printed, you can specify that it should end with a blank:
+
+  
+
+  ```python
+  print('a', end='') 
+  
+  print('b', end='')
+  
+  输出:
+  ab
+  ```
+
+Or you can end with a space:
+
+```python
+print('a', end=' ') 
+print('b', end=' ') 
+print('c')
+输出:
+a b c
+```
+
+### Logical And Physical Line
+
+A physical line is what you see when you write the program. A logical line is what Python sees as a single statement. Python implicitly assumes that each physical line corresponds to a logical line.
+
+If you want to specify more than one logical line on a single physical line, then you have to explicitly specify this using a semicolon ( ; ) which indicates the end of a logical line/statement.
+
+For example:
+
+```python
+i = 5 
+print(i)
+```
+
+is effectively same as
+
+```
+i = 5; print(i);
+```
+
+which is also same as
+
+```
+i = 5; print(i);
+```
+
+and same as
+
+```
+i = 5; print(i)
+```
+
+事实上没有人会在python里用分号
+
+* if you have a long line of code, you can break it into multiple physical lines by using the backslash. This is referred to as `explicit line joining`: 
+
+  ```python
+  s = 'This is a string. \ 
+  This continues the string.' 
+  print(s)
+  
+  Output:
+  This is a string. This continues the string.
+  ```
+
+  Similarly, 
+
+  ```
+  i = \ 
+  5
+  ```
+
+  is the same as
+
+  ```
+  i = 5
+  ```
+### Expression
+  ```python
+  length = 5 
+  breadth = 2
+
+  print('Perimeter is', 2 * (length + breadth))
+  ```
+python的`pretty print`会自动加一个空格,程序员不用为此操心了
+
+
 
 ## 使用list和tuple
 
@@ -1193,7 +1396,7 @@ def my_abs(x):
 ​		return -x
 ```
 
-如果没有`return`语句，函数执行完毕后也会返回结果，只是结果为`None`。`return None`可以简写为`return`。
+如果没有`return`语句，函数执行完毕后也会返回结果，只是结果为`None`。( Note that a return statement without a value is equivalent to `return None` )`return None`可以简写为`return`。
 
 ### 空函数
 
@@ -1216,6 +1419,8 @@ if age >= 18:
 缺少了`pass`，代码运行就会有语法错误。
 
 ### 参数检查
+
+`parameter`形参, `argument`实参
 
 调用函数时，如果参数个数不对，Python解释器会自动检查出来，并抛出`TypeError`：
 
@@ -1268,6 +1473,88 @@ TypeError: bad operand type
 
 错误和异常处理将在后续讲到。
 
+### The `global` statement
+
+If you want to assign a value to a name defined at the top level of the program (`i.e.` not inside any kind of **scope** such as functions or classes), then you have to tell Python that the name is not local, but it is `global`. We do this using the `global` statement. It is impossible to assign a value to a variable defined outside a function without the global statement. 在全局区域定义,在局部要使用的时候,要用`global`关键字
+You can use the values of such variables defined outside the function (assuming there is no variable with the same name within the function). However, this is not encouraged and should be avoided since it becomes unclear to the reader of the program as to where that variable's definition is. Using the `global` statement makes it amply clear(显式地声明,不写会报错,解释器会将这个变量看做未定义) that the variable is defined in an outermost block.
+
+```python
+x = 50
+def func(): 
+    global x
+	print('x is', x) 
+    x = 2 
+    print('Changed global x to', x)
+    
+func()
+print('Value of x is', x)
+```
+
+The global statement is used to declare that `x` is a global variable - hence, **when we assign a value to x inside the function, that change is reflected when we use the value of `x` in the main block**. 在函数里改变了全局变量x,x的值是会更改的.
+You can specify more than one global variable using the same global statement e.g. 
+
+`global x, y, z .`
+
+### Default Argument Values
+
+Only those parameters which are at the end of the parameter list can be given default argument values i.e. you cannot have a parameter with a default argument value preceding a parameter without a default argument value in the function's parameter list. This is because the values are assigned to the parameters by position. For example, def func(a, b=5) is valid, but def func(a=5, b) is not valid.
+
+
+
+### Keyword Arguments   传参的时候
+
+If you have some functions with many parameters and you want to specify only some of them, then you can give values for such parameters by *naming* them - this is called `keyword arguments` - we use the name (keyword) **instead of the position** (which we have been using all along) to specify the arguments to the function.
+There are two advantages - one, using the function is easier since we do not need to worry about the order of the arguments. Two, we can give values to only those parameters to which we want to, provided that the other parameters have *default argument values*.
+
+```python
+def func(a, b=5, c=10): 
+print('a is', a, 'and b is', b, 'and c is', c)
+func(3, 7) 
+func(25, c=24) 
+func(c=50, a=100)
+
+Output:
+$ python function_keyword.py 
+a is 3 and b is 7 and c is 10 
+a is 25 and b is 5 and c is 24 
+a is 100 and b is 5 and c is 50
+```
+
+**How it works**:
+
+In the second usage func(25, c=24) , the variable a gets the value of 25 due to the**position** of the argument. Then, the parameter c gets the value of 24 due to **naming** i.e. `keyword arguments`. The variable b gets the default value of 5 .
+
+### VarArgs parameters
+
+Sometimes you might want to define a function that can take any number of parameters, i.e. variable number of arguments, this can be achieved by using the stars. 可以传入任意数量的参数
+
+```python
+def total(a=5, *numbers, **phonebook): p
+    rint('a', a)
+#iterate through all the items in tuple 
+for single_item in numbers: 
+    print('single_item', single_item)
+#iterate through all the items in dictionary 
+for first_part, second_part in phonebook.items(): 		print(first_part,second_part)
+    
+print(total(10,1,2,3,Jack=1123,John=2231,Inge=1560))
+
+Output:
+$ python function_varargs.py 
+a 10
+single_item 1
+single_item 2 
+single_item 3 
+Inge 1560 
+John 2231 
+Jack 1123 
+None
+```
+
+**How it works**
+When we declare a starred parameter such as `*`param , then all the positional arguments from that point till the end are collected as a `tuple` called 'param'.
+Similarly, when we declare a double-starred parameter such as `**`param , then all the keyword arguments from that point till the end are collected as a `dictionary` called 'param'.
+
 ### 返回多个值
 
 函数可以返回多个值吗？答案是肯定的。
@@ -1308,7 +1595,7 @@ def move(x, y, step, angle=0):
 ```python
 def parse():
     return 12,'me'
-x,y = parse() # 把oarse()看作一个元组,默认按下标顺序赋值
+x,y = parse() # 把parse()看作一个元组,默认按下标顺序赋值
 print(x,y)
 
 输出为: 12 me
