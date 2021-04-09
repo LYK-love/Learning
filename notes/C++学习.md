@@ -514,7 +514,7 @@ cout << s.length() << endl;
 
    长度是3,输出是`abc`,也就是遇到`\0`会截断
 
-### 命名空间
+#### 命名空间
 
 * `cin` 和 `cout` 是 C++ 标准库内置**对象**而不是关键字
 
@@ -580,3 +580,206 @@ using std::cout;
   •工具
 
   •http://cpp.sh/
+
+
+
+## 程序组织
+
+* 逻辑结构
+* 物理结构
+  * 多个源文件组成
+  * main唯一
+* 工程文件
+  * 外部文件
+  * 外部变量
+
+### namespace
+
+### 编译预处理
+
+* 与作用域, 类型, 接口等概念格格不入
+  * 潜伏于环境
+  * 穿透于作用域
+
+#### #include
+
+  * make interface definitions available
+  * compose source text
+
+#### #define
+
+  * Symbolic constants    `const`
+  * Open subroutines `inline`
+  * Generic subroutines  `template` //这三种复用都是源代码层次的，即 可以看到细节的
+  * Generic "types"  `template`
+  * Renaming  `namespace`   // 以上五点，C++中已经有了替换的方法，而下面三点，C++中还没有合适的替代方法：
+  * String concatenation
+  * Special purpose syntax
+  * General macro processing
+
+  ```C++
+  # define MAX(x,y) x >= y ? x : y //不加括号的后果
+  12 * MAX(2,3)
+      12 * 2 >= 3 ? 2 : 3
+  
+  
+  
+  
+  # define MIN(x,y) ((x) < (y) ? (x) : ( y));//这样可以实现泛型，前提是类类里面重载了“<”运算符
+  
+  ```
+
+  缺点：
+
+  * 重复计算，因为宏不是函数
+  * 没有类型检查，太宽松了
+
+  注意：
+
+```c++
+#define ADD(x,y) {x+y;}
+int x=0,y=1;
+if( x == 0 )
+    ADD(x,y);  //会报错,因为花括号后面有分号
+else
+    cout << "HI";
+//但如果写成:
+#define ADD(x,y) x+y;
+cout << ADD(x+y) << endl; //会报错
+//只能写成:
+#define ADD(x,y)  do{ x + y ; } while(0);
+```
+
+
+
+  #### 选择性编译
+
+* version  control
+
+```C++
+# ifndef MY_PRINT_VERSION
+	#define MY_PRINT_VERSION
+# endif
+
+# if MY_PRINTF_VERSION == 1
+void printf( char *str )
+{ ... }
+
+#elif MY_PRINTF_VERSION == 2
+int printf( char *fmt , char *args,... )
+{ ... }
+```
+
+* Commenting out code
+
+  #### #pragma
+
+* Control of layout
+* Informing the compiler
+
+##  数组
+
+* 特征
+
+  * 相同类型
+  * 连续存储
+
+* 一维数组
+
+  * 类型定义
+
+  * 函数接口
+
+    * 元素个数须通过参数**显式**给出, 不能通过`sizeof`取得. 
+
+      传入的`len`不能保证真的是数组长度,C++是允许数组越界的
+
+      * 字符串
+
+```C++
+void  f( int a[16] )
+{
+	int len = sizeof(a);  //这是错误的
+}
+//必须写成:
+void  f( int a[16] , int size)			
+```
+
+``` c++
+char s1[] = "abc"; // == char s1 = {'a','b', 'c','\0'}
+char s2[] = {'a','b', 'c' };
+```
+
+### 多维数组
+
+* 定义
+* 存储组织,C++中一定要知道数组的`layout`(内存布局). C++中的多维数组只是一维数组的不断迭代,和java中的容器等是不一样的
+* 参数传递
+  * 缺省第一维( C++里没有`ragged array`)
+
+```C++
+int arr[][3] = {{1} , {2,3} , {4,5,6} }
+cout << arr[0][1] << endl; //java中这会报错,但是C++中这是允许的,会得到一个未定义的值. 1的后面是两个未定义的值,再往后是2,3和一个未定义的值,然后是4,5,6. 也就是说真的有3 * 3 = 9 个元素. 这和java中的ragged array不同.
+```
+
+* 升/降维处理
+
+## Struct
+
+* 赋值 --- 同类型
+*  alignment. 契合硬件,提升效率
+* 参数传递
+
+```C++
+struct B
+{
+    char b; //1
+    int a; //4
+    short c; //2
+};
+cout << sizeof(B) << endl; //答案是12,因为会对齐
+```
+
+## union
+
+* 共享存储空间
+
+  ```C++
+  union C
+  {
+  	char b; //1
+  	int a; //4
+  	short c; //2
+  };
+  cout << sizeof(C) << endl; //答案是4
+  ```
+
+  ```C++
+  union Matrix
+  {
+  	struct 
+  	{
+  		double a11, a12, a13;
+  		double a21, a22, a23;
+  		double a31, a32, a33;
+  	};
+  	double _element[3][3];
+  };	
+  
+  Matrix m;
+  	int i, j;
+  	for (i = 0; i < 3; i++)
+  		for (j = 0; j < 3; j++)
+  			m._element[i][j] = (i + 1) * (j + 1);
+  
+  	m.a11 = 0;
+  	m.a22 = 0;
+  	m.a33 = 0;
+  
+  	for (i = 0; i < 3; i++)
+  		for (j = 0; j < 3; j++)
+  			cout << m._element[i][j] << endl;
+  ```
+
+  
+
