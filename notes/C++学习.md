@@ -897,7 +897,55 @@ cout << sizeof(B) << endl; //答案是12,因为会对齐
 
       `<类型> * const <指针变量>`
 
-    * 
+    * 数组的最后一个元素的后一个元素的指针是空指针`nullptr`
+
+### 指针数组
+
+* main函数:
+
+  ```C++
+  int main( int argc, char* argv[], char* env[] )
+  {
+      cout << argc << endl;
+      for( int i=0; i != argc ; i++ )
+      {
+          cout << argv[i] << endl;
+      }
+  
+        cout << env << endl;
+  
+        return 0;
+  
+    }
+  ```
+
+  `argc`:参数个数
+
+  `argv`:命令行参数
+
+  `env`:环境参数
+
+  
+
+### 多级指针
+
+* 编写一个函数，交换两个字符串
+
+  ```C++
+  int main( int argc, char* argv[], char* env[] )
+  {
+      char *p1 = "abcd";
+      char *p2 = "1234";
+      cout << p1 << "  " << p2 << endl;
+      swap( &p1, &p2 );
+      cout << p1 << "  " << p2 << endl;
+      return 0;
+  
+  
+    }
+  ```
+
+  
 
 ### 动态变量
 
