@@ -318,6 +318,8 @@ C++ 标准输入输出包含在头文件 <iostream> 中，使用输入输出流�
   }
 ```
 
+* `int stoi(string)` : 把字符串转换成整数
+
 #### 标准输出流cout
 
 * 流插入符`<<`
@@ -711,6 +713,52 @@ char s1[] = "abc"; // == char s1 = {'a','b', 'c','\0'}
 char s2[] = {'a','b', 'c' };
 ```
 
+```C++
+//找到arr中的第一个负数
+#include<iterator>
+int arr[] = {0,1,2,3,4,5.-1};
+int *pbeg = begin(arr), *pend = end(arr);
+while( pbeg!= pend && *pend  >= 0)
+	++pbeg;
+```
+
+### 删除所有数组所有元素
+
+```
+int remove(int * arr, int target, int n){
+	int front = 0, back = 0, targetCnt = 0;
+	for(; back < n; back++){
+		if(arr[back] == target){
+			targetCnt++;
+		}else{
+			arr[front] = arr[back];
+			front++;
+		}
+	}
+	return targetCnt;
+}
+
+
+
+int main(int argc, char const *argv[])
+{
+	int a1[] = {1, 2, 3, 4, 0, 6, 6, 6, 7, 8, 6, 4, 5};
+	int l1 = 1;
+
+	l1 -= remove(a1, 6, l1);
+
+	for(int i = 0; i < l1; i++){
+		std::cout << a1[i] << " ";
+	}
+	std::cout << std::endl;
+	system("pause");
+	return 0;
+}
+
+```
+
+
+
 ### 多维数组
 
 * 定义
@@ -829,6 +877,7 @@ cout << sizeof(B) << endl; //答案是12,因为会对齐
     char *p = "ABCD";
     cout << p; //p指向的字符串,即"ABCD"
     cout << *p; // p指向的字符,即'A'
+    //对于int*之类的就不会这样
     ```
 
 * 例: 将某块内存清零
@@ -959,3 +1008,191 @@ cout << sizeof(B) << endl; //答案是12,因为会对齐
     * `new` --- `delete`  会调用析构函数
     * `delete []`
     * 申请的指针,不要改变它的值,这是因为申请空间使用的是`cookie`的方式. 如果硬要改变,那得创建一个副本,然后更改副本. 总之,不能更改申请的指针
+
+# 面向对象
+
+面向对象的优势是可以`设计`出`可复用性`和`可维护性`更强的代码. OO和PO能做的事其实是一样的,OO甚至会更慢,因为多态必然造成性能的下降.
+
+**OO只是设计层面的思想,和运行没有关系**
+
+1. 弱耦合性: 代码更容易复用
+2. 容易维护,主要是因为继承和多态,不点的接口,多种行为,类的内部可以自由修改(只要不该接口)
+
+例子:
+
+* PO实现Stack:
+
+```c++
+#include<iostream>
+using namespace std;
+#define STACK_SIZE 100
+struct Stack
+{
+    int top;
+    int buffer[STACK_SIZE];
+};
+
+bool push( Stack &s , int i )
+{
+    if( s.top == STACK_SIZE - 1 )
+    {
+        cout << "stack is overflow!" << endl;
+        return false;
+    }
+    else
+    {
+        s.top++;
+        s.buffer[s.top] = i;
+        return true;
+    }
+}
+
+bool pop( Stack &s, int &i )
+{
+    if( s.top == -1 )
+    {
+        cout << "stack is empty" << endl;
+        return false;
+    }
+    else
+    {
+        i = s.buffer[s.top];
+        s.top--;
+        return true;
+    }
+}
+
+int main()
+{
+    Stack st1,st2;
+    st1.top = -1;
+    st2.top = -1;
+    int x;
+    push( st1,12 );
+    pop( st1,x );
+    cout << x << endl;
+    return 0;
+}
+```
+
+* OO实现Stack
+
+  ```c++
+  #include<iostream>
+  using namespace std;
+  #define STACK_SIZE 100
+  
+  class Stack
+  {
+      private:
+      int top;
+      int buffer[STACK_SIZE];
+      public:
+      Stack() {top =  -1 ;}
+      bool push( int i );
+      bool pop( int &i );
+  };
+  
+  bool Stack::push( int i )
+  {
+   if( top == STACK_SIZE - 1 )
+      {
+          cout << "stack is overflow!" << endl;
+          return false;
+      }
+      else
+      {
+          top++;
+          buffer[top] = i;
+          return true;
+      }
+  
+  }
+  bool Stack::pop( int &i )
+  {
+      if( top == -1 )
+      {
+          cout << "stack is empty" << endl;
+          return false;
+      }
+      else
+      {
+          i = buffer[top];
+          top--;
+          return true;
+      }
+  }
+  
+  int main( void )
+  {
+      Stack st1,st2;
+      int x;
+      st1.push(12);
+      st1.pop(x);
+      cout << x << endl;
+      return 0;
+  }
+  ```
+
+  
+
+C++ 成员函数都有一个隐含的`T *const this`,指向本对象( 也就是存储的是本对象的地址 )
+
+* `getter`和`setter` 可以在类定义时定义,这样它们就成为`隐式内联函数`
+
+## 成员初始化表
+
+* 构造函数的补充
+* 执行
+  * **先于构造函数体**
+  * **按类数据成员申明次序**
+
+```C++
+Class A
+{
+	int x;
+	const int y;
+	int &z;
+	public:
+		A():y(1),z(x),x(0) //先于构造函数体,按类数据成员声明顺序,所以x初始化为0,z引用x. 再x赋值为10,z也变为10.
+			{ x = 100 }
+};
+```
+
+成员初始化表: 构造函数在分配内存的时候直接用这个值来进行初始化
+
+`x = 100`: 这是赋值,不是初始化. 构造函数先初始化x,然后复制为100.
+
+* 在构造函数中尽量使用成员初始化取代赋值动作
+  * `const`成员, `reference`成员, `对象成员`
+  * 效率高
+  * 数据成员太多时,不采用本条准则
+    * 降低可维护性
+
+
+
+**例题**
+
+```C++
+class CString
+{
+	char *p;
+	int size;
+public:
+CString(int x): size(x), p(new char[size]) {}
+
+};
+```
+
+错了! 因为p初始化的时候,`size`还没有初始化! 应该把`size`声明提前
+
+## 析构函数
+
+* `~<类名>()`
+*  对象消亡时,系统自动调用( 释放对象持有的非内存资源和不属于这个对象的内存 )
+* RAII vs GC:  
+  * RAII: `Resource Accuisition Is Installization` 资源获取即初始化
+  * 获得了一个资源,就像对待对象一样对待它
+
+* `public`
+  * 可定义为`private`

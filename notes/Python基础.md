@@ -1,5 +1,58 @@
 # Python基础
 
+## 小技巧
+
+### 矩阵
+
+转置矩阵
+
+```python
+def two_dimensional_array(m):
+    row_nums = len(m)
+    col_nums = len(m[0])
+    print("m = ", m)
+    print( "row_nums = {0}, col_nums = {1}".format( row_nums, col_nums ) )
+    rows = []
+    for j in range( 0, col_nums ):
+        tmp = []
+        for i in range( 0, row_nums ):
+            
+            tmp.append(m[i][j])
+            #print( m[i][j] )
+            if i == row_nums - 1:
+                print(tmp)
+                rows.append(tmp)
+    res_m = [ rows[j] for j in range( 0, col_nums ) ]        
+    return res_m
+
+//输入 [[1, 'j'], [2, 'k'], [3, 'l'], [4, 'm'], [5, 'n']]
+//输出 [[1, 2, 3, 4, 5], ['j', 'k', 'l', 'm', 'n']]
+
+```
+
+注意：
+
+python二维数组可以`res_m = [ rows[j] for j in range( 0, col_nums ) ] `创建。也就是说，列表生成式可以由元素生成列表，而这个元素本身也可以是列表，所以最后会生成一个`二维列表`。
+
+二维列表可以用列表生成式：
+
+```python
+    l1 = [ 1,2,3,4,5 ]
+    l2 = [ "j","k","l","m","n" ]
+    l3 = [ l1,l2 ] // 方法一
+    l4 = [ l3[i] for i in range(0,len(l3)) ] //方法二,列表生成式
+    
+    l5 = [].append(l1)
+    l5.append(l1)
+    l5.append(l2)  // 方法三
+    
+    //注意, "+"会把列表拼接起来, 而append()会把参数整个当作一个元素加到列表末尾
+    l6 = l1  + l2 // 结果是[ 1,2,3,4,5, "j","k","l","m","n" ] , 可以看到仍是一维的
+   
+```
+
+
+
 ## Intro
 
 > Python is an easy to learn, powerful programming language. It has efficient high-level data structures and a simple but effective approach to object-oriented programming. Python's elegant syntax and dynamic typing, together with its interpreted nature, make it an ideal language for scripting and rapid application development in many areas on most platforms.
@@ -151,6 +204,60 @@ line3''')
 多行字符串`'''...'''`还可以在前面加上`r`使用，请自行测试：
 
 `# -*- coding: utf-8 -*- ` Run
+
+##### 字符串与列表
+
+*  join() 方法用于将序列中的元素以指定的字符连接生成一个新的字符串
+
+  ```python
+  str = "-";
+  seq = ("a", "b", "c"); # 字符串序列
+  print str.join( seq );
+  
+  >> a-b-c
+  //''.join(seq) 结果即为：abc
+  //','.join(seq) 结果即为：a,b,c
+  ```
+
+* str >>>list 
+
+  ```python
+  str1 = "12345"
+  list1 = list(str1)
+  print list1
+  
+  str2 = "123 sjhid dhi"
+  list2 = str2.split() #or list2 = str2.split(" ")
+  print list2
+  
+  str3 = "www.google.com"
+  list3 = str3.split(".")
+  print list3
+  
+  输出为：
+  
+  ['1', '2', '3', '4', '5']
+  ['123', 'sjhid', 'dhi']
+  ['www', 'google', 'com']
+  ```
+
+  
+
+* list >>>str
+
+```python
+  str4 = "".join(list3)
+  print str4
+  str5 = ".".join(list3)
+  print str5
+  str6 = " ".join(list3)
+  print str6
+
+  输出为：
+  wwwgooglecom
+  www.google.com
+  www google com
+```
 
 #### 布尔值
 
@@ -1050,6 +1157,14 @@ if x:
 
 ### 再议 input
 
+将键入转为整数list
+
+```python
+l = list(map(lambda x:int(x),list(input().split(' '))))
+```
+
+
+
 最后看一个有问题的条件判断。很多同学会用`input()`读取用户的输入，这样可以自己输入，程序运行得更有意思：
 
 ```
@@ -1759,6 +1874,10 @@ tuple也是一种list，唯一区别是tuple不可变。因此，tuple也可以�
 ```
 
 在很多编程语言中，针对字符串提供了很多各种截取函数（例如，substring），其实目的就是对字符串切片。Python没有针对字符串的截取函数，只需要切片一个操作就可以完成，非常简单。
+
+Tips:
+
+反转list:` l = [****]    l = l[::-1] `
 
 ## 迭代
 
@@ -7705,7 +7824,7 @@ s = r'ABC\-001' # Python的字符串
 
 `match()`方法判断是否匹配，如果匹配成功，返回一个`Match`对象，否则返回`None`。常见的判断方法就是：
 
-```
+```python
 test = '用户输入的字符串'
 if re.match(r'正则表达式', test):
     print('ok')
