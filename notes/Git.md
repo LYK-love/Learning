@@ -1141,6 +1141,9 @@ Resolving deltas: 100% (14/14), done.
 
 当你的小伙伴从远程库clone时，默认情况下，你的小伙伴只能看到本地的`master`分支。不信可以用`git branch`命令看看：
 
+* git clone默认会把远程仓库整个给clone下来; 
+  但只会在本地默认创建一个master分支，与远程的master分支关联。所以尽管你clone了整个仓库，你在本地的master分支只能看到远程关联的master分支的内容。看不到dev分支的内容（但它们已经被clone到本地了）
+
 ```
 $ git branch
 * master
@@ -1148,9 +1151,14 @@ $ git branch
 
 现在，你的小伙伴要在`dev`分支上开发，就必须创建远程`origin`的`dev`分支到本地，于是他用这个命令创建本地`dev`分支：
 
+```git
+$ git  switch -c dev origin/dev
+
+Switched to a new branch 'dev'
+Branch 'dev' set up to track remote branch 'dev' from 'origin'.
 ```
-$ git checkout -b dev origin/dev
-```
+
+* 这个命令会创建本地dev分支，并与远程的dev分支相关联。现在你能看到远程的dev分支的内容了。
 
 现在，他就可以在`dev`上继续修改，然后，时不时地把`dev`分支`push`到远程：
 
@@ -1256,7 +1264,7 @@ To github.com:michaelliao/learngit.git
 - 查看远程库信息，使用`git remote -v`；
 - 本地新建的分支如果不推送到远程，对其他人就是不可见的；
 - 从本地推送分支，使用`git push origin branch-name`，如果推送失败，先用`git pull`抓取远程的新提交；
-- 在本地创建和远程分支对应的分支，使用`git checkout -b branch-name origin/branch-name`，本地和远程分支的名称最好一致；
+- 在本地创建和远程分支对应的分支并关联起来（ 就是说不用 `set-upstream` ），使用`git switch -c  branch-name origin/branch-name`，本地和远程分支的名称最好一致.
 - 建立本地分支和远程分支的关联，使用`git branch --set-upstream branch-name origin/branch-name`；
 - 从远程抓取分支，使用`git pull`，如果有冲突，要先处理冲突。
 
