@@ -117,9 +117,5 @@ hexo new a
 
 > default_layout: draft
 
-
-
-作者：小胖丫头不改名
-链接：https://www.jianshu.com/p/265b2c653e6f
-来源：简书
-著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+* 执行`hexo d`即可部署到 GitHub 仓库。
+* 新增或修改主题配置后部署时请执行 `hexo clean && hexo d`
